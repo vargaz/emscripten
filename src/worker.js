@@ -16,7 +16,7 @@ var tempDoublePtr = 0; // A temporary memory area for global float and double ma
 // Thread-local: Each thread has its own allocated stack space.
 var STACK_BASE = 0;
 var STACKTOP = 0;
-var STACK_MAX = 0;
+var STACK_LIMIT = 0;
 
 // These are system-wide memory area parameters that are set at main runtime startup in main thread, and stay constant throughout the application.
 var buffer; // All pthreads share the same Emscripten HEAP as SharedArrayBuffer with the main execution thread.
@@ -100,16 +100,16 @@ this.onmessage = function(e) {
       {{{ makeAsmExportAndGlobalAssignTargetInPthread('DYNAMICTOP_PTR') }}} = e.data.DYNAMICTOP_PTR;
 
 #if WASM
-      // The Wasm module will have import fields for STACKTOP and STACK_MAX. At 'load' stage of Worker startup, we are just
+      // The Wasm module will have import fields for STACKTOP and STACK_LIMIT. At 'load' stage of Worker startup, we are just
       // spawning this Web Worker to act as a host for future created pthreads, i.e. we do not have a pthread to start up here yet.
       // (A single Worker can also host multiple pthreads throughout its lifetime, shutting down a pthread will not shut down its hosting Worker,
       // but the Worker is reused for later spawned pthreads). The 'run' stage below will actually start running a pthread.
       // The stack space for a pthread is allocated and deallocated when a pthread is actually run, not yet at Worker 'load' stage.
-      // However, the WebAssembly module we are loading up here has import fields for STACKTOP and STACK_MAX, which it needs to get filled in
+      // However, the WebAssembly module we are loading up here has import fields for STACKTOP and STACK_LIMIT, which it needs to get filled in
       // immediately at Wasm Module instantiation time. The values of these will not get used until pthread is actually running some code, so
       // we'll proceed to set up temporary invalid values for these fields for import purposes. Then whenever a pthread is launched at 'run' stage
       // below, these values are rewritten to establish proper stack area for the particular pthread.
-      {{{ makeAsmExportAccessInPthread('STACK_MAX') }}} = {{{ makeAsmExportAccessInPthread('STACKTOP') }}}  = 0x7FFFFFFF;
+      {{{ makeAsmExportAccessInPthread('STACK_LIMIT') }}} = {{{ makeAsmExportAccessInPthread('STACKTOP') }}}  = 0x7FFFFFFF;
 
       // Module and memory were sent from main thread
       {{{ makeAsmExportAndGlobalAssignTargetInPthread('wasmModule') }}} = e.data.wasmModule;
@@ -185,14 +185,14 @@ this.onmessage = function(e) {
 #endif
       {{{ makeAsmExportAndGlobalAssignTargetInPthread('STACK_BASE') }}} = e.data.stackBase;
       {{{ makeAsmExportAndGlobalAssignTargetInPthread('STACKTOP') }}} = top;
-      {{{ makeAsmExportAndGlobalAssignTargetInPthread('STACK_MAX') }}} = max;
+      {{{ makeAsmExportAndGlobalAssignTargetInPthread('STACK_LIMIT') }}} = max;
 #if ASSERTIONS
       assert(threadInfoStruct);
       assert(selfThreadId);
       assert(parentThreadId);
       assert(STACK_BASE != 0);
 #if !WASM_BACKEND
-      assert(STACK_MAX > STACK_BASE);
+      assert(STACK_LIMIT > STACK_BASE);
 #endif
 #endif
       // Call inside asm.js/wasm module to set up the stack frame for this pthread in asm.js/wasm module scope

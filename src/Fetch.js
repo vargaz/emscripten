@@ -46,7 +46,7 @@ var Fetch = {
   initFetchWorker: function() {
     var stackSize = 128*1024;
     var stack = allocate(stackSize>>2, "i32*", ALLOC_DYNAMIC);
-    Fetch.worker.postMessage({cmd: 'init', DYNAMICTOP_PTR: DYNAMICTOP_PTR, STACKTOP: stack, STACK_MAX: stack + stackSize, queuePtr: _fetch_work_queue, buffer: HEAPU8.buffer});
+    Fetch.worker.postMessage({cmd: 'init', DYNAMICTOP_PTR: DYNAMICTOP_PTR, STACKTOP: stack, STACK_LIMIT: stack + stackSize, queuePtr: _fetch_work_queue, buffer: HEAPU8.buffer});
   },
 #endif
 

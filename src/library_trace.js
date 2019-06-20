@@ -264,7 +264,7 @@ var LibraryTracing = {
         'static_base':  STATIC_BASE,
         'stack_base':   STACK_BASE,
         'stack_top':    STACKTOP,
-        'stack_max':    STACK_MAX,
+        'stack_max':    STACK_LIMIT,
         'dynamic_base': DYNAMIC_BASE,
         'dynamic_top':  HEAP32[DYNAMICTOP_PTR>>2],
         'total_memory': HEAP8.length

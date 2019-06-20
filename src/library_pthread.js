@@ -1175,10 +1175,10 @@ var LibraryPThread = {
 #if WASM_BACKEND
     // The stack grows downwards
     STACKTOP = stackMax;
-    STACK_MAX = stackBase;
+    STACK_LIMIT = stackBase;
 #else
     STACKTOP = stackBase;
-    STACK_MAX = stackMax;
+    STACK_LIMIT = stackMax;
 #endif
   },
 #endif

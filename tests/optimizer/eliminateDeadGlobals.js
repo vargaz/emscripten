@@ -15,7 +15,7 @@ Module["asm"] =  (function(global,env,buffer) {
 
 
   var STACKTOP=env.STACKTOP|0;
-  var STACK_MAX=env.STACK_MAX|0;
+  var STACK_LIMIT=env.STACK_LIMIT|0;
   var tempDoublePtr=env.tempDoublePtr|0;
   var ABORT=env.ABORT|0;
 

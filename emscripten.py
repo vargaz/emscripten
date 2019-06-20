@@ -495,8 +495,8 @@ def create_module_asmjs(function_table_sigs, metadata,
   if not shared.Settings.RELOCATABLE and not (shared.Settings.WASM and shared.Settings.SIDE_MODULE):
     if 'STACKTOP' in shared.Settings.ASM_PRIMITIVE_VARS:
       stack += apply_memory('  var STACKTOP = {{{ STACK_BASE }}};\n')
-    if 'STACK_MAX' in shared.Settings.ASM_PRIMITIVE_VARS:
-      stack += apply_memory('  var STACK_MAX = {{{ STACK_MAX }}};\n')
+    if 'STACK_LIMIT' in shared.Settings.ASM_PRIMITIVE_VARS:
+      stack += apply_memory('  var STACK_LIMIT = {{{ STACK_LIMIT }}};\n')
 
   if 'tempFloat' in shared.Settings.ASM_PRIMITIVE_VARS:
     temp_float = '  var tempFloat = %s;\n' % ('Math_fround(0)' if provide_fround() else '0.0')
@@ -783,7 +783,7 @@ def apply_memory(js):
   # Write it all out
   js = js.replace('{{{ STATIC_BUMP }}}', str(memory.static_bump))
   js = js.replace('{{{ STACK_BASE }}}', str(memory.stack_base))
-  js = js.replace('{{{ STACK_MAX }}}', str(memory.stack_max))
+  js = js.replace('{{{ STACK_LIMIT }}}', str(memory.stack_max))
   js = js.replace('{{{ DYNAMIC_BASE }}}', str(memory.dynamic_base))
 
   logger.debug('global_base: %d stack_base: %d, stack_max: %d, dynamic_base: %d, static bump: %d', memory.global_base, memory.stack_base, memory.stack_max, memory.dynamic_base, memory.static_bump)
@@ -1356,7 +1356,7 @@ def create_asm_global_vars(bg_vars):
   asm_global_vars = ''.join(['  var ' + unminified + '=env' + access_quote(minified) + '|0;\n' for (minified, unminified) in bg_vars])
   if shared.Settings.WASM and shared.Settings.SIDE_MODULE:
     # wasm side modules internally define their stack, these are set at module startup time
-    asm_global_vars += '\n  var STACKTOP = 0, STACK_MAX = 0;\n'
+    asm_global_vars += '\n  var STACKTOP = 0, STACK_LIMIT = 0;\n'
 
   return asm_global_vars
 
@@ -1604,7 +1604,7 @@ def create_basic_vars(exported_implemented_functions, forwarded_json, metadata):
 
   if shared.Settings.RELOCATABLE:
     if not (shared.Settings.WASM and shared.Settings.SIDE_MODULE):
-      basic_vars += ['gb', 'fb', 'STACKTOP', 'STACK_MAX']
+      basic_vars += ['gb', 'fb', 'STACKTOP', 'STACK_LIMIT']
     else:
       # wasm side modules have a specific convention for these
       basic_vars += ['__memory_base', '__table_base']
@@ -1615,7 +1615,7 @@ def create_basic_vars(exported_implemented_functions, forwarded_json, metadata):
     basic_vars += ['___async', '___async_unwind', '___async_retval', '___async_cur_frame']
 
   if shared.Settings.EMTERPRETIFY:
-    basic_vars += ['EMTSTACKTOP', 'EMT_STACK_MAX', 'eb']
+    basic_vars += ['EMTSTACKTOP', 'EMT_STACK_LIMIT', 'eb']
 
   return basic_vars
 
@@ -1849,7 +1849,7 @@ def create_runtime_funcs_asmjs(exports):
     return []
 
   if shared.Settings.ASSERTIONS or shared.Settings.STACK_OVERFLOW_CHECK >= 2:
-    stack_check = '  if ((STACKTOP|0) >= (STACK_MAX|0)) abortStackOverflow(size|0);\n'
+    stack_check = '  if ((STACKTOP|0) >= (STACK_LIMIT|0)) abortStackOverflow(size|0);\n'
   else:
     stack_check = ''
 
@@ -1874,7 +1874,7 @@ function establishStackSpace(stackBase, stackMax) {
   stackBase = stackBase|0;
   stackMax = stackMax|0;
   STACKTOP = stackBase;
-  STACK_MAX = stackMax;
+  STACK_LIMIT = stackMax;
 }
 ''' % stack_check]
 
@@ -1910,11 +1910,11 @@ function emtStackRestore(x) {
   EMTSTACKTOP = x;
 }
 function getEmtStackMax() {
-  return EMT_STACK_MAX | 0;
+  return EMT_STACK_LIMIT | 0;
 }
 function setEmtStackMax(x) {
   x = x | 0;
-  EMT_STACK_MAX = x;
+  EMT_STACK_LIMIT = x;
 }
 ''')
 

@@ -116,7 +116,7 @@ mergeInto(LibraryManager.library, {
  *
  *  0 callee's async ctx
  *  4 callee's STACKTOP
- *  8 callee's STACK_MAX
+ *  8 callee's STACK_LIMIT
  * 12 my async ctx
  * 16 my STACKTOP
  * 20 my stack size
@@ -154,10 +154,10 @@ mergeInto(LibraryManager.library, {
     {{{ makeSetValueAsm('coroutine', 0, '___async_cur_frame', 'i32') }}};
     temp = stackSave() | 0;
     {{{ makeSetValueAsm('coroutine', 4, 'temp', 'i32') }}};
-    {{{ makeSetValueAsm('coroutine', 8, 'STACK_MAX', 'i32') }}};
+    {{{ makeSetValueAsm('coroutine', 8, 'STACK_LIMIT', 'i32') }}};
     ___async_cur_frame = {{{ makeGetValueAsm('coroutine', 12, 'i32') }}};
     stackRestore({{{ makeGetValueAsm('coroutine', 16, 'i32') }}});
-    STACK_MAX = coroutine + 32 + {{{ makeGetValueAsm('coroutine', 20, 'i32') }}} | 0;
+    STACK_LIMIT = coroutine + 32 + {{{ makeGetValueAsm('coroutine', 20, 'i32') }}} | 0;
 
     if (!___async_cur_frame) {
       // first run
@@ -175,7 +175,7 @@ mergeInto(LibraryManager.library, {
     {{{ makeSetValueAsm('coroutine', 16, 'temp', 'i32') }}};
     ___async_cur_frame = {{{ makeGetValueAsm('coroutine', 0, 'i32') }}};
     stackRestore({{{ makeGetValueAsm('coroutine', 4, 'i32') }}});
-    STACK_MAX = {{{ makeGetValueAsm('coroutine', 8, 'i32') }}};
+    STACK_LIMIT = {{{ makeGetValueAsm('coroutine', 8, 'i32') }}};
 
     coroutine_not_finished = ___async;
     if (!coroutine_not_finished) {
@@ -453,10 +453,10 @@ mergeInto(LibraryManager.library, {
    *
    *  0 callee's EMTSTACKTOP
    *  4 callee's EMTSTACKTOP from the compiled code
-   *  8 callee's EMT_STACK_MAX
+   *  8 callee's EMT_STACK_LIMIT
    * 12 my EMTSTACKTOP
    * 16 my EMTSTACKTOP from the compiled code
-   * 20 my EMT_STACK_MAX
+   * 20 my EMT_STACK_LIMIT
    * 24 coroutine function (0 if already started)
    * 28 coroutine arg
    * 32 my stack:

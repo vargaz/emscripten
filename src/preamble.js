@@ -319,7 +319,7 @@ if (!ENVIRONMENT_IS_PTHREAD) { // Pthreads have already initialized these variab
 var STATIC_BASE = {{{ GLOBAL_BASE }}},
     STACK_BASE = {{{ getQuoted('STACK_BASE') }}},
     STACKTOP = STACK_BASE,
-    STACK_MAX = {{{ getQuoted('STACK_MAX') }}},
+    STACK_LIMIT = {{{ getQuoted('STACK_LIMIT') }}},
     DYNAMIC_BASE = {{{ getQuoted('DYNAMIC_BASE') }}},
     DYNAMICTOP_PTR = {{{ makeStaticAlloc(4) }}};
 
@@ -334,7 +334,7 @@ assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
 
 #if EMTERPRETIFY
 function abortStackOverflowEmterpreter() {
-  abort("Emterpreter stack overflow! Decrease the recursion level or increase EMT_STACK_MAX in tools/emterpretify.py (current value " + EMT_STACK_MAX + ").");
+  abort("Emterpreter stack overflow! Decrease the recursion level or increase EMT_STACK_LIMIT in tools/emterpretify.py (current value " + EMT_STACK_LIMIT + ").");
 }
 #endif
 

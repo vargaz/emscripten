@@ -18,7 +18,7 @@ else {
   var DYNAMIC_BASE = {{{EXPORT_NAME}}}.DYNAMIC_BASE;
   var DYNAMICTOP_PTR = {{{EXPORT_NAME}}}.DYNAMICTOP_PTR;
   var PthreadWorkerInit = {{{EXPORT_NAME}}}.PthreadWorkerInit;
-  // Note that not all runtime fields are imported above. Values for STACK_BASE, STACKTOP and STACK_MAX are not yet known at worker.js load time.
+  // Note that not all runtime fields are imported above. Values for STACK_BASE, STACKTOP and STACK_LIMIT are not yet known at worker.js load time.
   // These will be filled in at pthread startup time (the 'run' message for a pthread - pthread start establishes the stack frame)
 }
 #endif

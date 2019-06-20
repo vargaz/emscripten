@@ -96,7 +96,7 @@ if (typeof ENVIRONMENT_IS_PTHREAD === 'undefined') {
   var PthreadWorkerInit = {{{EXPORT_NAME}}}.PthreadWorkerInit;
   var STACK_BASE = {{{EXPORT_NAME}}}.STACK_BASE;
   var STACKTOP = {{{EXPORT_NAME}}}.STACKTOP;
-  var STACK_MAX = {{{EXPORT_NAME}}}.STACK_MAX;
+  var STACK_LIMIT = {{{EXPORT_NAME}}}.STACK_LIMIT;
 }
 
 var currentScriptUrl = typeof _scriptDir !== 'undefined' ? _scriptDir : ((typeof document !== 'undefined' && document.currentScript) ? document.currentScript.src : undefined);

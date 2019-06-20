@@ -27,7 +27,7 @@ logger = logging.getLogger('emterpretify')
 
 INNERTERPRETER_LAST_OPCODE = 0 # 'CONDD'
 
-EMT_STACK_MAX = 1024 * 1024
+EMT_STACK_LIMIT = 1024 * 1024
 
 LOG_CODE = int(os.environ.get('EMCC_LOG_EMTERPRETER_CODE', '0'))
 
@@ -536,7 +536,7 @@ def handle_async_post_call():
 CASES[ROPCODES['INTCALL']] = '''
     lz = HEAPU8[(HEAP32[pc + 4 >> 2] | 0) + 1 | 0] | 0; // FUNC inst, see definition above; we read params here
     ly = 0;''' + ('''
-    if (((EMTSTACKTOP + 8|0) > (EMT_STACK_MAX|0))|0) // for return value
+    if (((EMTSTACKTOP + 8|0) > (EMT_STACK_LIMIT|0))|0) // for return value
       abortStackOverflowEmterpreter(); ''' if ASSERTIONS else '') + '''
     %s
      %s
@@ -764,7 +764,7 @@ function emterpret%s(pc) {
         push_stacktop(zero),
         ROPCODES['FUNC'],
         (''' EMTSTACKTOP = EMTSTACKTOP + (lx ''' + (' + 1 ' if ASYNC else '') + '''<< 3) | 0;\n''' +
-         (''' if (((EMTSTACKTOP|0) > (EMT_STACK_MAX|0))|0) abortStackOverflowEmterpreter();\n''' if ASSERTIONS else '') +
+         (''' if (((EMTSTACKTOP|0) > (EMT_STACK_LIMIT|0))|0) abortStackOverflowEmterpreter();\n''' if ASSERTIONS else '') +
          (' if ((asyncState|0) != 2) {' if ASYNC else '')) if not zero else '',
         ' } else { pc = (HEAP32[sp - 4 >> 2] | 0) - 8 | 0; }' if ASYNC else '',
         main_loop))
@@ -1058,8 +1058,8 @@ function emterpAssert(x) {
   # set up emterpreter stack top (note we must use malloc if in a shared lib, or other enviroment where static memory is sealed)
   js = ['''
 var EMTSTACKTOP = getMemory(%s);
-var EMT_STACK_MAX = EMTSTACKTOP + %d;
-''' % (EMT_STACK_MAX, EMT_STACK_MAX)]
+var EMT_STACK_LIMIT = EMTSTACKTOP + %d;
+''' % (EMT_STACK_LIMIT, EMT_STACK_LIMIT)]
 
   # write out our bytecode, and runtime relocation logic
   js += ['''

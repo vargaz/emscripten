@@ -44,7 +44,7 @@ var GLOBAL_BASE = {{{ GLOBAL_BASE }}},
     STATIC_BASE = {{{ GLOBAL_BASE }}},
     STACK_BASE = {{{ getQuoted('STACK_BASE') }}},
     STACKTOP = STACK_BASE,
-    STACK_MAX = {{{ getQuoted('STACK_MAX') }}}
+    STACK_LIMIT = {{{ getQuoted('STACK_LIMIT') }}}
 #if USES_DYNAMIC_ALLOC
     , DYNAMICTOP_PTR = {{{ makeStaticAlloc(4) }}}
 #endif

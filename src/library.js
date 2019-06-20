@@ -1418,7 +1418,7 @@ LibraryManager.library = {
 
 #if MINIMAL_RUNTIME
   $abortStackOverflow: function(allocSize) {
-    abort('Stack overflow! Attempted to allocate ' + allocSize + ' bytes on the stack, but stack has only ' + (STACK_MAX - stackSave() + allocSize) + ' bytes available!');
+    abort('Stack overflow! Attempted to allocate ' + allocSize + ' bytes on the stack, but stack has only ' + (STACK_LIMIT - stackSave() + allocSize) + ' bytes available!');
   },
 
   $stackAlloc__asm: true,
@@ -1431,7 +1431,7 @@ LibraryManager.library = {
     STACKTOP = (STACKTOP + size)|0;
     STACKTOP = (STACKTOP + 15)&-16;
 #if ASSERTIONS || STACK_OVERFLOW_CHECK >= 2
-    if ((STACKTOP|0) >= (STACK_MAX|0)) abortStackOverflow(size|0);
+    if ((STACKTOP|0) >= (STACK_LIMIT|0)) abortStackOverflow(size|0);
 #endif
     return ret|0;
   },
@@ -1455,7 +1455,7 @@ LibraryManager.library = {
     stackBase = stackBase|0;
     stackMax = stackMax|0;
     STACKTOP = stackBase;
-    STACK_MAX = stackMax;
+    STACK_LIMIT = stackMax;
   },
 
 #if WASM_BACKEND == 0

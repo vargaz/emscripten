@@ -7450,7 +7450,7 @@ extern "C" {
         check_memprof_requirements: function() {
           if (typeof STATIC_BASE === 'number' &&
               typeof STACK_BASE === 'number' &&
-              typeof STACK_MAX === 'number' &&
+              typeof STACK_LIMIT === 'number' &&
               typeof STACKTOP === 'number' &&
               typeof DYNAMIC_BASE === 'number' &&
               typeof DYNAMICTOP_PTR === 'number') {

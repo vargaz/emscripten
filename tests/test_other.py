@@ -354,7 +354,7 @@ There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR P
           assert '._main = ' not in generated, 'closure compiler should not have been run'
           if keep_debug:
             assert ('switch (label)' in generated or 'switch (label | 0)' in generated) == (opt_level <= 0), 'relooping should be in opt >= 1'
-            assert ('assert(STACKTOP < STACK_MAX' in generated) == (opt_level == 0), 'assertions should be in opt == 0'
+            assert ('assert(STACKTOP < STACK_LIMIT' in generated) == (opt_level == 0), 'assertions should be in opt == 0'
           if 'WASM=0' in params:
             if opt_level >= 2 and '-g' in params:
               assert re.search('HEAP8\[\$?\w+ ?\+ ?\(+\$?\w+ ?', generated) or re.search('HEAP8\[HEAP32\[', generated) or re.search('[i$]\d+ & ~\(1 << [i$]\d+\)', generated), 'eliminator should create compound expressions, and fewer one-time vars' # also in -O1, but easier to test in -O2

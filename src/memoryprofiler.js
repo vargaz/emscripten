@@ -311,10 +311,10 @@ var emscriptenMemoryProfiler = {
     html += '<br />' + colorBar('#202020') + 'STATIC memory area size: ' + this.formatBytes(STACK_BASE - STATIC_BASE);
     html += '. STATIC_BASE: ' + toHex(STATIC_BASE, width);
 
-    html += '<br />' + colorBar('#FF8080') + 'STACK memory area size: ' + this.formatBytes(STACK_MAX - STACK_BASE);
+    html += '<br />' + colorBar('#FF8080') + 'STACK memory area size: ' + this.formatBytes(STACK_LIMIT - STACK_BASE);
     html += '. STACK_BASE: ' + toHex(STACK_BASE, width);
     html += '. STACKTOP: ' + toHex(STACKTOP, width);
-    html += '. STACK_MAX: ' + toHex(STACK_MAX, width) + '.';
+    html += '. STACK_LIMIT: ' + toHex(STACK_LIMIT, width) + '.';
     html += '<br />STACK memory area used now (should be zero): ' + this.formatBytes(STACKTOP - STACK_BASE) + '.' + colorBar('#FFFF00') + ' STACK watermark highest seen usage (approximate lower-bound!): ' + this.formatBytes(this.stackTopWatermark - STACK_BASE);
 
     var DYNAMICTOP = HEAP32[DYNAMICTOP_PTR>>2];
@@ -336,7 +336,7 @@ var emscriptenMemoryProfiler = {
     this.drawContext.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.drawContext.fillStyle = "#FF8080";
-    this.fillLine(STACK_BASE, STACK_MAX);
+    this.fillLine(STACK_BASE, STACK_LIMIT);
 
     this.drawContext.fillStyle = "#FFFF00";
     this.fillLine(STACK_BASE, this.stackTopWatermark);

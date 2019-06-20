@@ -106,7 +106,7 @@ def eval_ctors_js(js, mem_init, num):
     for bit in bits:
       name, value = [x.strip() for x in bit.split('=', 1)]
       if value in ['0', '+0', '0.0'] or name in [
-        'STACKTOP', 'STACK_MAX', 'DYNAMICTOP_PTR',
+        'STACKTOP', 'STACK_LIMIT', 'DYNAMICTOP_PTR',
         'HEAP8', 'HEAP16', 'HEAP32',
         'HEAPU8', 'HEAPU16', 'HEAPU32',
         'HEAPF32', 'HEAPF64',
@@ -194,7 +194,7 @@ var globalArg = {
 
 var libraryArg = {
   STACKTOP: stackTop,
-  STACK_MAX: stackMax,
+  STACK_LIMIT: stackMax,
   DYNAMICTOP_PTR: dynamicTopPtr,
   ___dso_handle: 0, // used by atexit, value doesn't matter
   _emscripten_memcpy_big: function(dest, src, num) {

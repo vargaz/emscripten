@@ -64,7 +64,7 @@ Fetch.staticInit();
 var queuePtr = 0;
 var buffer = null;
 var STACKTOP = 0;
-var STACK_MAX = 0;
+var STACK_LIMIT = 0;
 var HEAP8 = null;
 var HEAPU8 = null;
 var HEAP16 = null;
@@ -112,7 +112,7 @@ this.onmessage = function(e) {
     queuePtr = e.data.queuePtr;
     buffer = e.data.buffer;
     STACKTOP = e.data.STACKTOP;
-    STACK_MAX = e.data.STACK_MAX;
+    STACK_LIMIT = e.data.STACK_LIMIT;
     DYNAMICTOP_PTR = e.data.DYNAMICTOP_PTR;
     HEAP8 = new Int8Array(buffer);
     HEAPU8 = new Uint8Array(buffer);
