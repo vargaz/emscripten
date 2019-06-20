@@ -175,17 +175,19 @@ this.onmessage = function(e) {
       selfThreadId = e.data.selfThreadId;
       parentThreadId = e.data.parentThreadId;
       // Establish the stack frame for this thread in global scope
+      var stackLow = e.data.stackBase;
+      var stackHigh = e.data.stackBase + e.data.stackSize;
 #if WASM_BACKEND
       // The stack grows downwards
-      var max = e.data.stackBase;
-      var top = e.data.stackBase + e.data.stackSize;
+      var stackLimit = stackLow;
+      var stackTop = stackHigh;
 #else
-      var max = e.data.stackBase + e.data.stackSize;
-      var top = e.data.stackBase;
+      var stackLimit = stackHigh;
+      var stackTop = stackLow;
 #endif
       {{{ makeAsmExportAndGlobalAssignTargetInPthread('STACK_BASE') }}} = e.data.stackBase;
-      {{{ makeAsmExportAndGlobalAssignTargetInPthread('STACKTOP') }}} = top;
-      {{{ makeAsmExportAndGlobalAssignTargetInPthread('STACK_LIMIT') }}} = max;
+      {{{ makeAsmExportAndGlobalAssignTargetInPthread('STACKTOP') }}} = stackTop;
+      {{{ makeAsmExportAndGlobalAssignTargetInPthread('STACK_LIMIT') }}} = stackLimit;
 #if ASSERTIONS
       assert(threadInfoStruct);
       assert(selfThreadId);
@@ -196,10 +198,10 @@ this.onmessage = function(e) {
 #endif
 #endif
       // Call inside asm.js/wasm module to set up the stack frame for this pthread in asm.js/wasm module scope
-      Module['establishStackSpace'](e.data.stackBase, e.data.stackBase + e.data.stackSize);
+      Module['establishStackSpace'](stackLow, stackHigh);
 #if MODULARIZE
       // Also call inside JS module to set up the stack frame for this pthread in JS module scope
-      Module['establishStackSpaceInJsModule'](e.data.stackBase, e.data.stackBase + e.data.stackSize);
+      Module['establishStackSpaceInJsModule'](stackLow, stackHigh);
 #endif
 #if STACK_OVERFLOW_CHECK
       {{{ makeAsmGlobalAccessInPthread('writeStackCookie') }}}();

@@ -1451,11 +1451,11 @@ LibraryManager.library = {
 
   $establishStackSpace__asm: true,
   $establishStackSpace__sig: 'vii',
-  $establishStackSpace: function(stackBase, stackMax) {
-    stackBase = stackBase|0;
-    stackMax = stackMax|0;
-    STACKTOP = stackBase;
-    STACK_LIMIT = stackMax;
+  $establishStackSpace: function(stackLow, stackHigh) {
+    stackLow = stackLow|0;
+    stackHigh = stackHigh|0;
+    STACKTOP = stackLow;
+    STACK_LIMIT = stackHigh;
   },
 
 #if WASM_BACKEND == 0

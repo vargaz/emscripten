@@ -1170,15 +1170,15 @@ var LibraryPThread = {
   },
 
 #if MODULARIZE
-  $establishStackSpaceInJsModule: function(stackBase, stackMax) {
-    STACK_BASE = stackBase;
+  $establishStackSpaceInJsModule: function(stackLow, stackHigh) {
+    STACK_BASE = stackLow;
 #if WASM_BACKEND
     // The stack grows downwards
-    STACKTOP = stackMax;
-    STACK_LIMIT = stackBase;
+    STACKTOP = stackHigh;
+    STACK_LIMIT = stackLow;
 #else
-    STACKTOP = stackBase;
-    STACK_LIMIT = stackMax;
+    STACKTOP = stackLow;
+    STACK_LIMIT = stackHigh;
 #endif
   },
 #endif
