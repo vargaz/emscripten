@@ -256,6 +256,8 @@ var LibraryPThread = {
 
         (function(worker) {
           worker.onmessage = function(e) {
+            if (!e.data)
+              e.data = e;
             var d = e.data;
             // Sometimes we need to backproxy events to the calling thread (e.g. HTML5 DOM events handlers such as emscripten_set_mousemove_callback()), so keep track in a globally accessible variable about the thread that initiated the proxying.
             if (worker.pthread) PThread.currentProxiedOperationCallerThread = worker.pthread.threadInfoStruct;
@@ -351,6 +353,9 @@ var LibraryPThread = {
           DYNAMICTOP_PTR: DYNAMICTOP_PTR,
           PthreadWorkerInit: PthreadWorkerInit
         });
+        // Wait for the 'loaded' message synchronously
+        msg = worker.getMessage ();
+        worker.onmessage ({ data: msg });
         PThread.unusedWorkerPool.push(worker);
       }
     },

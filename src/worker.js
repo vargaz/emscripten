@@ -49,13 +49,15 @@ function assert(condition, text) {
 
 // When error objects propagate from Web Worker to main thread, they lose helpful call stack and thread ID information, so print out errors early here,
 // before that happens.
-this.addEventListener('error', function(e) {
-  if (e.message.indexOf('SimulateInfiniteLoop') != -1) return e.preventDefault();
+if (this.addEventListener) {
+  this.addEventListener('error', function(e) {
+    if (e.message.indexOf('SimulateInfiniteLoop') != -1) return e.preventDefault();
 
-  var errorSource = ' in ' + e.filename + ':' + e.lineno + ':' + e.colno;
-  console.error('Pthread ' + selfThreadId + ' uncaught exception' + (e.filename || e.lineno || e.colno ? errorSource : "") + ': ' + e.message + '. Error object:');
-  console.error(e.error);
-});
+    var errorSource = ' in ' + e.filename + ':' + e.lineno + ':' + e.colno;
+    console.error('Pthread ' + selfThreadId + ' uncaught exception' + (e.filename || e.lineno || e.colno ? errorSource : "") + ': ' + e.message + '. Error object:');
+    console.error(e.error);
+  });
+}
 
 function threadPrint() {
   var text = Array.prototype.slice.call(arguments).join(' ');
@@ -90,6 +92,8 @@ var wasmModule;
 var wasmMemory;
 
 this.onmessage = function(e) {
+  if (!e.data)
+    e.data = e;
   try {
     if (e.data.cmd === 'load') { // Preload command that is called once per worker to parse and load the Emscripten code.
       // Initialize the thread-local field(s):
@@ -146,12 +150,16 @@ this.onmessage = function(e) {
         postMessage({ cmd: 'loaded' });
       });
 #else
-      if (typeof e.data.urlOrBlob === 'string') {
-        importScripts(e.data.urlOrBlob);
+      if (typeof importScripts === 'function') {
+        if (typeof e.data.urlOrBlob === 'string') {
+          importScripts(e.data.urlOrBlob);
+        } else {
+          var objectUrl = URL.createObjectURL(e.data.urlOrBlob);
+          importScripts(objectUrl);
+          URL.revokeObjectURL(objectUrl);
+        }
       } else {
-        var objectUrl = URL.createObjectURL(e.data.urlOrBlob);
-        importScripts(objectUrl);
-        URL.revokeObjectURL(objectUrl);
+        load (e.data.urlOrBlob);
       }
 #if MODULARIZE
 #if !MODULARIZE_INSTANCE
